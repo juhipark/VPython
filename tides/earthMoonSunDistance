@@ -5,7 +5,7 @@ from visual import *
 scene.caption = "The Earth's tides"
 scene.width = 650
 scene.height = 650
-scene.background = color.white
+scene.background = color.black
 
 
 earth = sphere(pos=vector(0,0,0), color=color.green)
