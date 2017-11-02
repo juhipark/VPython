@@ -1,5 +1,19 @@
 from __future__ import print_function, division
 from visual import *
+from visual.graph import *
+import wx
+
+L=400
+Hgraph=400
+#Create a window.
+w = window(width=2*(L+window.dwidth), height=L+window.dheight+window.menuheight+Hgraph,
+           menus=True, title='The Earth\'s Tide', style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX)
+
+#Placing display
+d=20
+Hdisp=200
+disp = display(window=w, x=d, y=d, width=L*2-(d*2), height=Hdisp, forward=-vector(0,1,2), background=color.white)
+#########gdisplay(window=w, y=disp.height+50, width=2*(L+window.dwidth), height=Hgraph)
 
 #Mass of Earth: 5.97e21t
 #Mass of Moon: 7.36e19t
@@ -23,16 +37,6 @@ moonDis = 3.85e5+earthRad*2+moonRad*2
 #Earth to sun: 149785000km e8
 sunDis = 1.50e8
 
-#setting display scene
-scene.title = "The Earth's tides"
-scene.caption = "The Earth's tides"
-
-scene.visible = False # show nothing yet
-scene.visible = True  # show everything
-scene.width = 950
-scene.height = 350
-scene.background = color.white
-#scene.range = (sunDis/2,1,1)
 
 earth = sphere(material=materials.BlueMarble, radius=earthRad*2)
 moon = sphere(color=color.gray(2), material=materials.shiny, radius=moonRad*2)
@@ -42,3 +46,13 @@ sun = sphere(pos=vector((sunDis/2),0,0), color=color.yellow, material=materials.
 earth.pos=vector(-(sunDis/2)+earthRad*2,0, 0)
 moon.pos=earth.pos+(moonDis, 0, 0)
 sun.pos=vector((sunDis/2),0,0)
+
+
+#Make panel to place buttons and slider:
+p = w.panel
+
+#Place slider:
+s1 = wx.Slider(p, pos=(1.0*L,0.8*L), size=(0.9*L,20), minValue=0, maxValue=100)
+wx.StaticText(p, pos=(1.0*L,0.75*L), label='Set distance between Moon and Earth')
+
+
