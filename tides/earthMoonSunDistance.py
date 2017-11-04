@@ -1,6 +1,7 @@
 from __future__ import print_function, division
 from visual import *
 from visual.graph import *
+from math import *
 import wx
 
 L=400
@@ -54,7 +55,8 @@ moon2=sphere(pos=vector(1.5e11,0,0), radius=1e10, color=(.7,0.7,.7), make_trail=
 moon2.m=1e30
 moon2.p=-earth2.p
 dispOrbit.range=(1e11*2.5,1,1)
-    
+initialPos2=moon2.pos.x
+
 ####Graph display:
 #gdisplay(window=w, y )
 
@@ -71,10 +73,18 @@ displayTitle.SetBackgroundColour((247, 181, 158))
 ####Functionality of buttons and slider:
 
 def moveMoon(value):
+    #userText.Clear()
     d = (sunDis-sunRad*2-earthRad*2 - moonDis)
     moon.pos.x = initialPos + d*(value/100)
-
-def moveOrbit(value):    
+    tidePercent=str(moonMass/(moon.pos.x**2))
+   
+    ends=str(userText.GetLineLength(3))
+    userText.AppendText(ends)
+    ends=int(ends)
+    userText.Remove(38, ends)
+    userText.AppendText(tidePercent +'%\n')
+    
+def moveOrbit(value):
     dt=1e5
     while value:
         rate(75)
@@ -84,10 +94,12 @@ def moveOrbit(value):
         moon2.p=moon2.p-F*dt
         earth2.pos=earth2.pos
         moon2.pos=moon2.pos+(moon2.p/moon2.m)*dt
-    orbit.Bind(wx.EVT_BUTTON, )
+        value=orbit.GetValue()
         
+#def plotGraph():
+
 def setOrbit(evt):
-    value = orbit.GetAuthNeeded()
+    value = orbit.GetValue()
     moveOrbit(value)
     
 def setLow(evt):
@@ -105,13 +117,15 @@ low = wx.Button(p, label='Low tide', pos=(1.0*L,0.85*L))
 low.Bind(wx.EVT_BUTTON, setLow)
 high = wx.Button(p, label='High tide', pos=(1.25*L,0.85*L))
 high.Bind(wx.EVT_BUTTON, setHigh)
-orbit = wx.Button(p, label='Orbit', pos=(1.125*L,0.95*L))
-orbit.Bind(wx.EVT_BUTTON, setOrbit)
+orbit = wx.ToggleButton(p, label='Orbit', pos=(1.125*L,0.95*L))
+orbit.Bind(wx.EVT_TOGGLEBUTTON, setOrbit)
 
 ###Place TextCtrl for userinput:
-userText = wx.TextCtrl(p, pos=(1.55*L,0.85*L), value='You can type here:\n', size=(150,80))
-userText.SetInsertionPoint(len(userText.GetValue())+1)#cursor position at the end of text
-userText.SetFocus()#keypresses go to this TextCtrl without clicking it
+userText = wx.TextCtrl(p, pos=(1.55*L,0.85*L), value='Percentage of Tide \nGenerating Force:\n', size=(150,80))
+userText.AppendText('%\n')
+
+#userText.SetInsertionPoint(len(userText.GetValue())+1)#cursor position at the end of text
+#userText.SetFocus()#keypresses go to this TextCtrl without clicking it
 
 ####Place slider:
 sliderTitle = wx.StaticText(p, pos=(1.0*L,0.65*L), label='Set distance between Moon and Earth')
@@ -126,8 +140,8 @@ s1.Bind(wx.EVT_SCROLL, setMove)
 
 ####Graph
 gdisp=gdisplay(window=w, y=disp.height+300, width=2*(L+window.dwidth), height=Hdisp*1.4)
-funct1 = gcurve(color=color.cyan)
-funct2 = gvbars(delta=0.5, color=color.red)
+funct1 = gdots(color=color.cyan)#moon distance
+funct2 = gvbars(delta=0.5, color=color.red)#tide affecting percentage
 
 for t in arange(-30,74,1):
     funct1.plot(pos=(t, 5.0+5.0*cos(-0.2*t)*exp(0.015*t)))
